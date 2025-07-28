@@ -9,10 +9,10 @@ const todo = {
             } else {
                 elemItem.dataset.todoState = action;
             }
-            this.save();
+            this.saveTask();
         } else if (target.classList.contains('todo__add')) {
             this.addNewTask();
-            this.save();
+            this.saveTask();
         }
     },
     addNewTask() {
@@ -43,7 +43,7 @@ const todo = {
         document.querySelector('.todo__items').dataset.todoOption = option;
         document.querySelector('.todo__text').disabled = option !== 'active';
     },
-    save() {
+    saveTask() {
         localStorage.setItem('todo', document.querySelector('.todo__items').innerHTML);
     }
 };
