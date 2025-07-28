@@ -1,5 +1,5 @@
 const todo = {
-    action(e) {
+    action(e) { // e это event
         const target = e.target;
         if (target.classList.contains('todo__action')) {
             const action = target.dataset.todoAction;
@@ -11,11 +11,11 @@ const todo = {
             }
             this.save();
         } else if (target.classList.contains('todo__add')) {
-            this.add();
+            this.addNewTask();
             this.save();
         }
     },
-    add() {
+    addNewTask() {
         const elemText = document.querySelector('.todo__text');
         if (elemText.disabled || !elemText.value.length) {
             return;
