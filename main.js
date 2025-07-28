@@ -41,10 +41,10 @@ const todo = {
         if (fromStorage) {
             document.querySelector('.todo__items').innerHTML = fromStorage;
         }
-        document.querySelector('.todo__options').addEventListener('change', this.update);
+        document.querySelector('.todo__options').addEventListener('change', this.filterTasks);
         document.addEventListener('click', this.action.bind(this))
     },
-    update() {
+    filterTasks() {
         const option = document.querySelector('.todo__options').value;
         document.querySelector('.todo__items').dataset.todoOption = option;
         document.querySelector('.todo__text').disabled = option !== 'active';
