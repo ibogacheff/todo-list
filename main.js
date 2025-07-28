@@ -16,19 +16,25 @@ const todo = {
         }
     },
     addNewTask() {
-        const elemText = document.querySelector('.todo__text');
-        if (elemText.disabled || !elemText.value.length) {
+        const todoTextElem = document.querySelector('.todo__text');
+
+        if (todoTextElem.disabled || !todoTextElem.value.length) {
             return;
         }
-        document.querySelector('.todo__items').insertAdjacentHTML('beforeend', this.create(elemText.value));
-        elemText.value = '';
+
+        const todoItemsElem = document.querySelector('.todo__items')
+        const todoItemString = this.createTodoItemString(todoTextElem.value);
+
+        todoItemsElem.insertAdjacentHTML('beforeend', todoItemString);
+        todoTextElem.value = '';
     },
-    create(text) {
+    createTodoItemString(titleTask) {
         return `<li class="todo__item" data-todo-state="active">
-    <span class="todo__task">${text}</span>
-    <span class="todo__action todo__action_restore" data-todo-action="active"></span>
-    <span class="todo__action todo__action_complete" data-todo-action="completed"></span>
-    <span class="todo__action todo__action_delete" data-todo-action="deleted"></span></li>`;
+                    <span class="todo__task">${titleTask}</span>
+                    <span class="todo__action todo__action_restore" data-todo-action="active"></span>
+                    <span class="todo__action todo__action_complete" data-todo-action="completed"></span>
+                    <span class="todo__action todo__action_delete" data-todo-action="deleted"></span>
+                </li>`;
     },
     init() {
         const fromStorage = localStorage.getItem('todo');
