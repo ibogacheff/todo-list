@@ -28,8 +28,9 @@ const todo = {
         todoItemsElem.insertAdjacentHTML('beforeend', todoItemString);
         todoTextElem.value = '';
     },
-    createTodoItemString(titleTask, itemCreationDate) {
-        itemCreationDate = new Date();
+    createTodoItemString(titleTask) {
+        const date = new Date();
+
         const optionsDate = {
             year: 'numeric',
             month: '2-digit',
@@ -39,9 +40,13 @@ const todo = {
             hour: '2-digit',
             minute: '2-digit'
         };
+
+        const itemCreationDate = date.toLocaleDateString("ru-RU", optionsDate);
+        const itemCreationTime = date.toLocaleDateString("ru-RU", optionsTime).split(', ')[1];
+
         return `<li class="todo__item" data-todo-state="active">
                     <span class="todo__task">${titleTask}</span>
-                    <div class="todo__createdAt">Создана: ${itemCreationDate.toLocaleDateString("ru-RU", optionsDate)} в ${itemCreationDate.toLocaleDateString("ru-RU", optionsTime).split(', ')[1]}</div>
+                    <div class="todo__createdAt">Создана: ${itemCreationDate} в ${itemCreationTime}</div>
                     <span class="todo__action todo__action_restore" data-todo-action="active"></span>
                     <span class="todo__action todo__action_complete" data-todo-action="completed"></span>
                     <span class="todo__action todo__action_delete" data-todo-action="deleted"></span>
