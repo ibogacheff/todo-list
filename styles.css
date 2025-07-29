@@ -122,6 +122,11 @@ body {
     overflow: hidden;
 }
 
+.todo__createdAt {
+    font-size: 12px;
+    color: gray
+}
+
 .todo__item:not(:last-child) {
     margin-bottom: 0.5rem;
 }
