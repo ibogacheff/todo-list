@@ -194,8 +194,11 @@ body {
 }
 
 [data-todo-state="completed"] {
-    text-decoration: line-through;
     background-color: #f1f8ed;
+}
+
+[data-todo-state="completed"] .todo__task {
+    text-decoration: line-through;
 }
 
 [data-todo-state="deleted"] .todo__task {
