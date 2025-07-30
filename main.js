@@ -1,5 +1,16 @@
 const todo = {
     action(e) { // e это event
+        const date = new Date()
+        const optionsDate = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        };
+        const optionsTime = {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
         const target = e.target;
         if (target.classList.contains('todo__action')) {
             const action = target.dataset.todoAction;
@@ -8,6 +19,16 @@ const todo = {
                 elemItem.remove();
             } else {
                 elemItem.dataset.todoState = action;
+                if (elemItem.querySelector('.todo__updatedAt')) {
+                    elemItem.querySelector('.todo__updatedAt').remove();
+                    const itemUpdationDate = date.toLocaleDateString("ru-RU", optionsDate);
+                    const itemUpdationTime = date.toLocaleDateString("ru-RU", optionsTime).split(', ')[1];
+                    elemItem.insertAdjacentHTML('beforeend', `<div class="todo__updatedAt">Изменена: ${itemUpdationDate} в ${itemUpdationTime}</div>`);
+                } else {
+                    const itemUpdationDate = date.toLocaleDateString("ru-RU", optionsDate);
+                    const itemUpdationTime = date.toLocaleDateString("ru-RU", optionsTime).split(', ')[1];
+                    elemItem.insertAdjacentHTML('beforeend', `<div class="todo__updatedAt">Изменена: ${itemUpdationDate} в ${itemUpdationTime}</div>`);
+                }
             }
             this.saveTask();
         } else if (target.classList.contains('todo__add')) {
