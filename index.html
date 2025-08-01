@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 shrink-to-fit=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0 shrink-to-fit=no"
+    />
     <title>Todo List on pure JavaScript</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="main.js"></script>
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- <script defer src="main.js"></script> -->
+  </head>
+  <body>
     <div class="todo">
-        <div class="todo__input">
-            <input class="todo__text" type="text">
-            <span class="todo__add"></span>
-        </div>
-        <select class="todo__options">
-            <option value="active">активные</option>
-            <option value="completed">завершённые</option>
-            <option value="deleted">удалённые</option>
-        </select>
-        <ul class="todo__items" data-todo-option="active"></ul>
+      <div class="todo__input">
+        <input class="todo__text" type="text" />
+        <span class="todo__add"></span>
+      </div>
+      <select class="todo__options">
+        <option value="active">активные</option>
+        <option value="completed">завершённые</option>
+        <option value="deleted">удалённые</option>
+      </select>
+      <ul class="todo__items" data-todo-option="active"></ul>
     </div>
-</body>
+    <!-- <div id="app"></div> -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
