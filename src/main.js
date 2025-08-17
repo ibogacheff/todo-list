@@ -1,11 +1,14 @@
 const deletedState = "deleted";
-const TODO_TEXT = ".todo__text";
-const TODO_OPTIONS = ".todo__options";
-const TODO_UPDATEDAT = "todo__updatedAt";
-const TODO_ACTION = "todo__action";
-const TODO_ITEM = "todo__item";
-const TODO_DESCRIPTION = "todo__description";
-const TODO_ITEMS = ".todo__items";
+
+const TODO_CLASS = {
+  OPTIONS: "todo__options",
+  TEXT: "todo__text",
+  UPDATEDAT: "todo__updatedAt",
+  ITEM: "todo__item",
+  ACTION: "todo__action",
+  DESCRIPTION: "todo__description",
+  ITEMS: "todo__items",
+};
 
 const optionsDate = {
   year: "numeric",
@@ -21,15 +24,15 @@ const optionsTime = {
 const todo = {
   action(e) {
     const target = e.target;
-    if (target.classList.contains(TODO_ACTION)) {
+    if (target.classList.contains(TODO_CLASS.ACTION)) {
       const action = target.dataset.todoAction;
       const isDescribe = target.dataset.todoDescribe;
-      const elemItem = target.closest(`.${TODO_ITEM}`);
+      const elemItem = target.closest(`.${TODO_CLASS.ITEM}`);
 
       if (isDescribe) {
-        const todoItemContainer = target.closest(`.${TODO_ITEM}`);
+        const todoItemContainer = target.closest(`.${TODO_CLASS.ITEM}`);
         const descriptionElement = todoItemContainer.querySelector(
-          `.${TODO_DESCRIPTION}`
+          `.${TODO_CLASS.DESCRIPTION}`
         );
         this.addDescription(descriptionElement);
         return;
@@ -42,8 +45,8 @@ const todo = {
         elemItem.remove();
       } else {
         elemItem.dataset.todoState = action;
-        if (elemItem.querySelector(`.${TODO_UPDATEDAT}`)) {
-          elemItem.querySelector(`.${TODO_UPDATEDAT}`).remove();
+        if (elemItem.querySelector(`.${TODO_CLASS.UPDATEDAT}`)) {
+          elemItem.querySelector(`.${TODO_CLASS.UPDATEDAT}`).remove();
         }
         this.addUpdatedAt(elemItem);
       }
@@ -57,25 +60,25 @@ const todo = {
     const date = new Date();
     const itemUpdationDate = date.toLocaleDateString("ru-RU", optionsDate);
     const itemUpdationTime = date.toLocaleTimeString("ru-RU", optionsTime);
-    const updatedAtElement = elemItem.querySelector(`.${TODO_UPDATEDAT}`);
+    const updatedAtElement = elemItem.querySelector(`.${TODO_CLASS.UPDATEDAT}`);
 
     if (updatedAtElement) {
       updatedAtElement.textContent = `Изменена: ${itemUpdationDate} в ${itemUpdationTime}`;
     } else {
       elemItem.insertAdjacentHTML(
         "beforeend",
-        `<div class=${TODO_UPDATEDAT}>Изменена: ${itemUpdationDate} в ${itemUpdationTime}</div>`
+        `<div class=${TODO_CLASS.UPDATEDAT}>Изменена: ${itemUpdationDate} в ${itemUpdationTime}</div>`
       );
     }
   },
   addNewTask() {
-    const todoTextElem = document.querySelector(TODO_TEXT);
+    const todoTextElem = document.querySelector(`.${TODO_CLASS.TEXT}`);
 
     if (todoTextElem.disabled || !todoTextElem.value.length) {
       return;
     }
 
-    const todoItemsElem = document.querySelector(TODO_ITEMS);
+    const todoItemsElem = document.querySelector(`.${TODO_CLASS.ITEMS}`);
     const todoItemString = this.createTodoItemString(todoTextElem.value);
 
     todoItemsElem.insertAdjacentHTML("beforeend", todoItemString);
@@ -84,14 +87,14 @@ const todo = {
   createTodoItemString(titleTask) {
     const { itemCreationDate, itemCreationTime } = this.addCreatedAt();
 
-    return `<li class=${TODO_ITEM} data-todo-state="active">
+    return `<li class=${TODO_CLASS.ITEM} data-todo-state="active">
                     <span class="todo__task">${titleTask}</span>
-                    <div class=${TODO_DESCRIPTION}>Описание</div>
+                    <div class=${TODO_CLASS.DESCRIPTION}>Описание</div>
                     <div class="todo__createdAt">Создана: ${itemCreationDate} в ${itemCreationTime}</div>
-                    <span class="${TODO_ACTION} todo__action_restore" data-todo-action="active"></span>
-                    <span class="${TODO_ACTION} todo__action_complete" data-todo-action="completed"></span>
-                    <span class="${TODO_ACTION} todo__action_delete" data-todo-action="deleted"></span>
-                    <span class="${TODO_ACTION} todo__action_describe" data-todo-action="active" data-todo-describe="true"></span>
+                    <span class="${TODO_CLASS.ACTION} todo__action_restore" data-todo-action="active"></span>
+                    <span class="${TODO_CLASS.ACTION} todo__action_complete" data-todo-action="completed"></span>
+                    <span class="${TODO_CLASS.ACTION} todo__action_delete" data-todo-action="deleted"></span>
+                    <span class="${TODO_CLASS.ACTION} todo__action_describe" data-todo-action="active" data-todo-describe="true"></span>
                 </li>`;
   },
   addCreatedAt() {
@@ -105,20 +108,24 @@ const todo = {
     const fromStorage = localStorage.getItem("todo");
 
     if (fromStorage) {
-      document.querySelector(TODO_ITEMS).innerHTML = fromStorage;
+      document.querySelector(`.${TODO_CLASS.ITEMS}`).innerHTML = fromStorage;
     }
     document
-      .querySelector(TODO_OPTIONS)
+      .querySelector(`.${TODO_CLASS.OPTIONS}`)
       .addEventListener("change", this.filterTasks);
     document.addEventListener("click", this.action.bind(this));
   },
   filterTasks() {
-    const option = document.querySelector(TODO_OPTIONS).value;
-    document.querySelector(TODO_ITEMS).dataset.todoOption = option;
-    document.querySelector(TODO_TEXT).disabled = option !== "active";
+    const option = document.querySelector(`.${TODO_CLASS.OPTIONS}`).value;
+    document.querySelector(`.${TODO_CLASS.ITEMS}`).dataset.todoOption = option;
+    document.querySelector(`.${TODO_CLASS.TEXT}`).disabled =
+      option !== "active";
   },
   saveTask() {
-    localStorage.setItem("todo", document.querySelector(TODO_ITEMS).innerHTML);
+    localStorage.setItem(
+      "todo",
+      document.querySelector(`.${TODO_CLASS.ITEMS}`).innerHTML
+    );
   },
   addDescription(descriptionElement) {
     let descriptionText = prompt("Пожалуйста, добавьте описание:");
@@ -129,7 +136,7 @@ const todo = {
 
     if (descriptionElement) {
       descriptionElement.textContent = descriptionText;
-      this.addUpdatedAt(descriptionElement.closest(`.${TODO_ITEM}`));
+      this.addUpdatedAt(descriptionElement.closest(`.${TODO_CLASS.ITEM}`));
     }
   },
 };
