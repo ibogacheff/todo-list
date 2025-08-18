@@ -1,0 +1,148 @@
+const deletedState = "deleted";
+const TODO = "todo";
+const locale = "ru-RU";
+
+const TODO_CLASS = {
+  OPTIONS: "todo__options",
+  TEXT: "todo__text",
+  UPDATEDAT: "todo__updatedAt",
+  ITEM: "todo__item",
+  ACTION: "todo__action",
+  DESCRIPTION: "todo__description",
+  ITEMS: "todo__items",
+  ADD: "todo__add",
+};
+
+const optionsDate = {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+};
+const optionsTime = {
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+};
+
+const todo = {
+  action(e) {
+    const target = e.target;
+    if (target.classList.contains(TODO_CLASS.ACTION)) {
+      const action = target.dataset.todoAction;
+      const isDescribe = target.dataset.todoDescribe;
+      const elemItem = target.closest(`.${TODO_CLASS.ITEM}`);
+
+      if (isDescribe) {
+        const todoItemContainer = target.closest(`.${TODO_CLASS.ITEM}`);
+        const descriptionElement = todoItemContainer.querySelector(
+          `.${TODO_CLASS.DESCRIPTION}`
+        );
+        this.addDescription(descriptionElement);
+        return;
+      }
+
+      if (
+        action === deletedState &&
+        elemItem.dataset.todoState === deletedState
+      ) {
+        elemItem.remove();
+      } else {
+        elemItem.dataset.todoState = action;
+        if (elemItem.querySelector(`.${TODO_CLASS.UPDATEDAT}`)) {
+          elemItem.querySelector(`.${TODO_CLASS.UPDATEDAT}`).remove();
+        }
+        this.addUpdatedAt(elemItem);
+      }
+      this.saveTask();
+    } else if (target.classList.contains(TODO_CLASS.ADD)) {
+      this.addNewTask();
+      this.saveTask();
+    }
+  },
+  addUpdatedAt(elemItem) {
+    const { itemDate, itemTime } = this.createDate();
+    const updatedAtElement = elemItem.querySelector(`.${TODO_CLASS.UPDATEDAT}`);
+
+    if (updatedAtElement) {
+      updatedAtElement.textContent = `Изменена: ${itemDate} в ${itemTime}`;
+    } else {
+      elemItem.insertAdjacentHTML(
+        "beforeend",
+        `<div class=${TODO_CLASS.UPDATEDAT}>Изменена: ${itemDate} в ${itemTime}</div>`
+      );
+    }
+  },
+  addNewTask() {
+    const todoTextElem = document.querySelector(`.${TODO_CLASS.TEXT}`);
+
+    if (todoTextElem.disabled || !todoTextElem.value.length) {
+      return;
+    }
+
+    const todoItemsElem = document.querySelector(`.${TODO_CLASS.ITEMS}`);
+    const todoItemString = this.createTodoItemString(todoTextElem.value);
+
+    todoItemsElem.insertAdjacentHTML("beforeend", todoItemString);
+    todoTextElem.value = "";
+  },
+  createTodoItemString(titleTask) {
+    const { itemDate, itemTime } = this.addCreatedAt();
+
+    return `<li class=${TODO_CLASS.ITEM} data-todo-state="active">
+                    <span class="todo__task">${titleTask}</span>
+                    <div class=${TODO_CLASS.DESCRIPTION}>Описание</div>
+                    <div class="todo__createdAt">Создана: ${itemDate} в ${itemTime}</div>
+                    <span class="${TODO_CLASS.ACTION} todo__action_restore" data-todo-action="active"></span>
+                    <span class="${TODO_CLASS.ACTION} todo__action_complete" data-todo-action="completed"></span>
+                    <span class="${TODO_CLASS.ACTION} todo__action_delete" data-todo-action="deleted"></span>
+                    <span class="${TODO_CLASS.ACTION} todo__action_describe" data-todo-action="active" data-todo-describe="true"></span>
+                </li>`;
+  },
+  addCreatedAt() {
+    const { itemDate, itemTime } = this.createDate();
+    return { itemDate, itemTime };
+  },
+  createDate() {
+    const date = new Date();
+    const itemDate = date.toLocaleDateString(locale, optionsDate);
+    const itemTime = date.toLocaleTimeString(locale, optionsTime);
+    return { itemDate, itemTime };
+  },
+  init() {
+    const fromStorage = localStorage.getItem(TODO);
+
+    if (fromStorage) {
+      document.querySelector(`.${TODO_CLASS.ITEMS}`).innerHTML = fromStorage;
+    }
+    document
+      .querySelector(`.${TODO_CLASS.OPTIONS}`)
+      .addEventListener("change", this.filterTasks);
+    document.addEventListener("click", this.action.bind(this));
+  },
+  filterTasks() {
+    const option = document.querySelector(`.${TODO_CLASS.OPTIONS}`).value;
+    document.querySelector(`.${TODO_CLASS.ITEMS}`).dataset.todoOption = option;
+    document.querySelector(`.${TODO_CLASS.TEXT}`).disabled =
+      option !== "active";
+  },
+  saveTask() {
+    localStorage.setItem(
+      TODO,
+      document.querySelector(`.${TODO_CLASS.ITEMS}`).innerHTML
+    );
+  },
+  addDescription(descriptionElement) {
+    let descriptionText = prompt("Пожалуйста, добавьте описание:");
+
+    if (descriptionText == null || descriptionText.trim() === "") {
+      return;
+    }
+
+    if (descriptionElement) {
+      descriptionElement.textContent = descriptionText;
+      this.addUpdatedAt(descriptionElement.closest(`.${TODO_CLASS.ITEM}`));
+    }
+  },
+};
+
+todo.init();
