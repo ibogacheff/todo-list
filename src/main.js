@@ -1,4 +1,6 @@
 const deletedState = "deleted";
+const TODO = "todo";
+const locale = "ru-RU";
 
 const TODO_CLASS = {
   OPTIONS: "todo__options",
@@ -8,6 +10,7 @@ const TODO_CLASS = {
   ACTION: "todo__action",
   DESCRIPTION: "todo__description",
   ITEMS: "todo__items",
+  ADD: "todo__add",
 };
 
 const optionsDate = {
@@ -51,23 +54,21 @@ const todo = {
         this.addUpdatedAt(elemItem);
       }
       this.saveTask();
-    } else if (target.classList.contains("todo__add")) {
+    } else if (target.classList.contains(TODO_CLASS.ADD)) {
       this.addNewTask();
       this.saveTask();
     }
   },
   addUpdatedAt(elemItem) {
-    const date = new Date();
-    const itemUpdationDate = date.toLocaleDateString("ru-RU", optionsDate);
-    const itemUpdationTime = date.toLocaleTimeString("ru-RU", optionsTime);
+    const { itemDate, itemTime } = this.createDate();
     const updatedAtElement = elemItem.querySelector(`.${TODO_CLASS.UPDATEDAT}`);
 
     if (updatedAtElement) {
-      updatedAtElement.textContent = `Изменена: ${itemUpdationDate} в ${itemUpdationTime}`;
+      updatedAtElement.textContent = `Изменена: ${itemDate} в ${itemTime}`;
     } else {
       elemItem.insertAdjacentHTML(
         "beforeend",
-        `<div class=${TODO_CLASS.UPDATEDAT}>Изменена: ${itemUpdationDate} в ${itemUpdationTime}</div>`
+        `<div class=${TODO_CLASS.UPDATEDAT}>Изменена: ${itemDate} в ${itemTime}</div>`
       );
     }
   },
@@ -85,12 +86,12 @@ const todo = {
     todoTextElem.value = "";
   },
   createTodoItemString(titleTask) {
-    const { itemCreationDate, itemCreationTime } = this.addCreatedAt();
+    const { itemDate, itemTime } = this.addCreatedAt();
 
     return `<li class=${TODO_CLASS.ITEM} data-todo-state="active">
                     <span class="todo__task">${titleTask}</span>
                     <div class=${TODO_CLASS.DESCRIPTION}>Описание</div>
-                    <div class="todo__createdAt">Создана: ${itemCreationDate} в ${itemCreationTime}</div>
+                    <div class="todo__createdAt">Создана: ${itemDate} в ${itemTime}</div>
                     <span class="${TODO_CLASS.ACTION} todo__action_restore" data-todo-action="active"></span>
                     <span class="${TODO_CLASS.ACTION} todo__action_complete" data-todo-action="completed"></span>
                     <span class="${TODO_CLASS.ACTION} todo__action_delete" data-todo-action="deleted"></span>
@@ -98,14 +99,17 @@ const todo = {
                 </li>`;
   },
   addCreatedAt() {
+    const { itemDate, itemTime } = this.createDate();
+    return { itemDate, itemTime };
+  },
+  createDate() {
     const date = new Date();
-
-    const itemCreationDate = date.toLocaleDateString("ru-RU", optionsDate);
-    const itemCreationTime = date.toLocaleTimeString("ru-RU", optionsTime);
-    return { itemCreationDate, itemCreationTime };
+    const itemDate = date.toLocaleDateString(locale, optionsDate);
+    const itemTime = date.toLocaleTimeString(locale, optionsTime);
+    return { itemDate, itemTime };
   },
   init() {
-    const fromStorage = localStorage.getItem("todo");
+    const fromStorage = localStorage.getItem(TODO);
 
     if (fromStorage) {
       document.querySelector(`.${TODO_CLASS.ITEMS}`).innerHTML = fromStorage;
@@ -123,7 +127,7 @@ const todo = {
   },
   saveTask() {
     localStorage.setItem(
-      "todo",
+      TODO,
       document.querySelector(`.${TODO_CLASS.ITEMS}`).innerHTML
     );
   },
